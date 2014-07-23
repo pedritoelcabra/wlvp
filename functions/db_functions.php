@@ -45,26 +45,30 @@ function query_db($table, $keys, $queried_key, $single){
         switch ($num){
             case 0: break;
             case 1:
-                if(!$single){
-                    header("Location: error.php?err=ALERT! Duplicated $w_keys with value $value from $table");
-                    $return_val = "<br/>ALERT! Duplicated $w_keys with value $value from $table";
-                }else{
+                if($single){
                     $data = $result->fetch_assoc();
                     $string = $data[$queried_key];
                     $return_val = $string;
+                }else{
+                    $return_val = $result->fetch_assoc();
                 }
                 break;
             default :
-                $result_arr = array();
-                while ($row = $result->fetch_assoc()){
-                    $result_arr[] = $row[$queried_key];
+                if($single){
+                    header("Location: error.php?err=ALERT! Duplicated ($num) $queried_key with keys: $w_keys with from $table");
+                    $return_val = 0;
+                }else{
+                    $result_arr = array();
+                    while ($row = $result->fetch_assoc()){
+                        $result_arr[] = $row[$queried_key];
+                    }
+                    $return_val = $result_arr;
                 }
-                $return_val = $result_arr;
                 break;
         }
     }else{
         header("Location: error.php?err=ALERT! Error getting $w_keys with value $value from $table");
-        $return_val = "<br/>ALERT! Error getting $w_keys with value $value from $table";
+        $return_val = 0;
     }
     
     $result->free();
