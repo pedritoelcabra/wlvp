@@ -27,7 +27,7 @@ function create_game($data){
 	$auth_token="hostAPIToken";
 	$api_auth=array(
 	   $auth_email => "",
-	   $auth_token => "";
+	   $auth_token => "");
 	$data=array_merge($api_auth,$data);
 //	var_dump($data);
 	$jsonString = json_encode($data);

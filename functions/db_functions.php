@@ -1,70 +1,90 @@
 <?php
+
 function condb(){
-	include("mysql_config.php");
-	$connect=mysql_connect($host,$username,$password);
-	$select=@mysql_select_db($database) or die( "Unable to select database");
-	return $connect;
-	return $select;
+    
+    include("mysql_config.php");
+    
+    $mysqli = new mysqli($host, $username, $password, $database);
+    if ($mysqli->connect_errno) {
+        printf("Connect failed: %s\n", $mysqli->connect_error);
+        exit();
+    }
+    return $mysqli;
+}
+
+//for insert statements
+function insert_db($query){
+    $mysqli = condb();
+    $result = $mysqli->query($query);
+    
+    $thread = $mysqli->thread_id;
+    $mysqli->kill($thread);
+    $mysqli->close();
+    return $result;
 }
 
 //query db by table & key/s -> return queried_key value/s, if $single=true returns string  
-function query_db($table,$keys,$queried_key,$single){
+function query_db($table, $keys, $queried_key, $single){
+    $mysqli = condb();
+    $return_val = NULL;
+    if($keys != NULL){
 	$n_keys=1;
-	$w_keys="WHERE ";
+	$w_keys=" WHERE ";
 	foreach($keys as $key=>$value){
-		if($n_keys>1){$w_keys.=" AND ";}
-		$w_keys.= "`".$key."` = '".$value."'";
-		$n_keys++;
+            if($n_keys>1){$w_keys.=" AND ";}
+            $w_keys.= "`".$key."` = '".$value."'";
+            $n_keys++;
 	}
-//	echo $w_keys."<br/>";
-	condb();
-	$query="SELECT * FROM `".$table."` ".$w_keys;
-//	echo $query."<br/>";
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-//	echo $num;
-	if(($num!=1)&&($single==TRUE)){
-		return "<br/>ALERT! Duplcated ".$key." with value '".$value."'";
-	}elseif($single==TRUE){
-		$i=0;
-		while ($i < $num) {
-			$queried=mysql_result($result,$i,$queried_key);
-//			echo $queried;
-			return $queried;
-			$i++;
-			}
-	}else{
-		$i=0;
-		$queried=array();
-		while ($i < $num) {
-			$queri=mysql_result($result,$i,$queried_key);
-//			echo $queried;
-			$queried[$i]=$queri;
-//			echo $queri."<br/>";
-			$i++;
-		}
-//		var_dump($queried);
-		return $queried;	
-	}
-	
-	mysql_close();
-
+    }else{
+        $w_keys = "";
+    }
+    
+    $query="SELECT $queried_key FROM `".$table."`".$w_keys;
+    if($result = $mysqli->query($query)){
+        $num = $result->num_rows;
+        switch ($num){
+            case 0: break;
+            case 1:
+                if(!$single){
+                    header("Location: error.php?err=ALERT! Duplicated $w_keys with value $value from $table");
+                    $return_val = "<br/>ALERT! Duplicated $w_keys with value $value from $table";
+                }else{
+                    $data = $result->fetch_assoc();
+                    $string = $data[$queried_key];
+                    $return_val = $string;
+                }
+                break;
+            default :
+                $result_arr = array();
+                while ($row = $result->fetch_assoc()){
+                    $result_arr[] = $row[$queried_key];
+                }
+                $return_val = $result_arr;
+                break;
+        }
+    }else{
+        header("Location: error.php?err=ALERT! Error getting $w_keys with value $value from $table");
+        $return_val = "<br/>ALERT! Error getting $w_keys with value $value from $table";
+    }
+    
+    $result->free();
+    $thread = $mysqli->thread_id;
+    $mysqli->kill($thread);
+    $mysqli->close();
+    return $return_val;
 }
+
 //query db by table & key -> returns true if queried_key value exist
 function check_db_entry($table,$key,$value){
-
-	condb();
-	$query="SELECT * FROM ".$table." WHERE ".$key." = '".$value."'";
-//	echo $query;
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-//	echo $num;
-	if($num!=0){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-	mysql_close();
-
+    $mysqli = condb();
+    $query="SELECT * FROM ".$table." WHERE ".$key." = '".$value."'";
+    $result = $mysqli->query($query);
+    $return_val = ($result->num_rows > 0);
+ 
+    $result->free();
+    $thread = $mysqli->thread_id;
+    $mysqli->kill($thread);
+    $mysqli->close();
+    return $return_val;
 }
 ?>
