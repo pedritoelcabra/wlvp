@@ -24,6 +24,8 @@ if(isset($_POST["action"])){
     }elseif($action=="Logout") {
         $_SESSION["mail"]="";
         $_SESSION["pass"]="";
+        $loged = FALSE;
+        $confirmed = "";
     }
 }
 
@@ -45,9 +47,12 @@ if($_SESSION["mail"]!=''){
     }else{
         $confirmed="wrong";
     }
+} else {
+    $loged=FALSE;	
+    $confirmed = "";
 }
 
-if($loged==FALSE){
+if($loged == FALSE){
     if($confirmed=="pending"){
 
             echo "Welcome, ".query_db("players",$m_search,"name",TRUE)."<br/>";

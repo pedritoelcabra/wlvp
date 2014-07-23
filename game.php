@@ -1,4 +1,5 @@
-<?php include("header.php");?>
+<?php 
+include("header.php");?>
 <?php if($loged==TRUE){?>
 <!---PAGE CONTENT WHEN LOGED-->
 <?php

@@ -22,12 +22,13 @@ function do_post_request($url, $data, $optional_headers = null)
 
 function create_game($data){
 //simplify only 2 create games
+    include_once 'api_data.php';
 	$url=$apiurl.'CreateGame';
 	$auth_email="hostEmail";
 	$auth_token="hostAPIToken";
 	$api_auth=array(
-	   $auth_email => "",
-	   $auth_token => "");
+	   $auth_email => $api_email,
+	   $auth_token => $api_token);
 	$data=array_merge($api_auth,$data);
 //	var_dump($data);
 	$jsonString = json_encode($data);
@@ -41,74 +42,74 @@ function create_game($data){
 }
 
 function post_request_data($data, $action){
+    include_once 'api_data.php';
 
-$postdata = http_build_query(
-    array(
-        'Email' => '',
-        'APIToken' => '',
-//	'GameID' => '1212978',
-//	'GetHistory' => 'true'
-    )
-);
+    $postdata = http_build_query(
+        array(
+            'Email' => $api_email,
+            'APIToken' => $api_token,
+            //	'GameID' => '1212978',
+            //	'GetHistory' => 'true'
+        )
+    );
 
-$opts = array('http' =>
-    array(
-        'method'  => 'POST',
-        'header'  => 'Content-type: application/x-www-form-urlencoded',
-        'content' => $postdata
-    )
-);
+    $opts = array('http' =>
+        array(
+            'method'  => 'POST',
+            'header'  => 'Content-type: application/x-www-form-urlencoded',
+            'content' => $postdata
+        )
+    );
 
-$context  = stream_context_create($opts);
-	$api_url='http://warlight.net/API/';
-	if($action=="player"){
-		$url=$api_url.'ValidateInviteToken?Token='.$data["Token"];
-		$auth_email="Email";
-		$auth_token="APIToken";
-	}elseif($action=="game"){
-		$url=$api_url.'GameFeed?GameID='.$data["GameID"]."&GetHistory=true";
-		$auth_email="Email";
-		$auth_token="APIToken";
-	}
+    $context  = stream_context_create($opts);
+    $api_url='http://warlight.net/API/';
+    if($action=="player"){
+            $url=$api_url.'ValidateInviteToken?Token='.$data["Token"];
+            $auth_email="Email";
+            $auth_token="APIToken";
+    }elseif($action=="game"){
+            $url=$api_url.'GameFeed?GameID='.$data["GameID"]."&GetHistory=true";
+            $auth_email="Email";
+            $auth_token="APIToken";
+    }
 
 
-$result = file_get_contents($url, false, $context);
+    $result = file_get_contents($url, false, $context);
 
-$count=99;
-for($i=0;$count!=0;$i++){
-$pattern = '/GameOrderDeploy":/';
-$order= 'GameOrderDeploy'.$i.'":';
-$replacement = $order;
-$result = preg_replace($pattern, $replacement, $result,1,$count);
-}
+    $count=99;
+    for($i=0;$count!=0;$i++){
+        $pattern = '/GameOrderDeploy":/';
+        $order= 'GameOrderDeploy'.$i.'":';
+        $replacement = $order;
+        $result = preg_replace($pattern, $replacement, $result,1,$count);
+    }
 
-$count=99;
-for($i=0;$count!=0;$i++){
-$pattern = '/GameOrderAttackTransfer":/';
-$order= 'GameOrderAttackTransfer'.$i.'":';
-$replacement = $order;
-$result = preg_replace($pattern, $replacement, $result,1,$count);
-}
+    $count=99;
+    for($i=0;$count!=0;$i++){
+        $pattern = '/GameOrderAttackTransfer":/';
+        $order= 'GameOrderAttackTransfer'.$i.'":';
+        $replacement = $order;
+        $result = preg_replace($pattern, $replacement, $result,1,$count);
+    }
 
-$Cards=cards();
+    $Cards=cards();
 
-foreach($Cards as $Card){
-	$count=99;
-	for($i=0;$count!=0;$i++){
-	$pattern = '/'.$Card.'":/';
-	$order= $Card.$i.'":';
-	$replacement = $order;
-	$result = preg_replace($pattern, $replacement, $result,1,$count);
-	}
-}
+    foreach($Cards as $Card){
+            $count=99;
+            for($i=0;$count!=0;$i++){
+            $pattern = '/'.$Card.'":/';
+            $order= $Card.$i.'":';
+            $replacement = $order;
+            $result = preg_replace($pattern, $replacement, $result,1,$count);
+            }
+    }
 
-//echo $result;
-$game_details=json_decode($result, true);
-if($game_details["error"]!=''){
-	echo $game_details["error"]."?";
-	return FALSE;
-}else{
-	return $game_details;
-}
+    $game_details=json_decode($result, true);
+    if(isset($game_details["error"])){
+        echo $game_details["error"]."?";
+        return FALSE;
+    }else{
+        return $game_details;
+    }
 }
 ?>

@@ -1,1 +1,4 @@
-/nbproject/private/
+/nbproject/private/mysql_config.php
+mysql_config.php~
+mysql_config.php
+functions/api_data.php
