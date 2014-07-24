@@ -17,5 +17,3 @@ $Cards=array(
 return $Cards;
 }
 
-
-?>

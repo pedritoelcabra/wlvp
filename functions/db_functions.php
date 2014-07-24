@@ -56,7 +56,7 @@ function query_db($table, $keys, $queried_key, $single){
             default :
                 if($single){
                     header("Location: error.php?err=ALERT! Duplicated ($num) $queried_key with keys: $w_keys with from $table");
-                    $return_val = 0;
+                    $return_val = NULL;
                 }else{
                     $result_arr = array();
                     while ($row = $result->fetch_assoc()){
@@ -68,7 +68,7 @@ function query_db($table, $keys, $queried_key, $single){
         }
     }else{
         header("Location: error.php?err=ALERT! Error getting $w_keys with value $value from $table");
-        $return_val = 0;
+        $return_val = NULL;
     }
     
     $result->free();

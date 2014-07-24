@@ -41,7 +41,7 @@ function create_game($data){
 	return $content;
 }
 
-function post_request_data($data, $action){
+function post_request_data($data, $action, $get_history){
     include_once 'api_data.php';
 
     $postdata = http_build_query(
@@ -64,13 +64,16 @@ function post_request_data($data, $action){
     $context  = stream_context_create($opts);
     $api_url='http://warlight.net/API/';
     if($action=="player"){
-            $url=$api_url.'ValidateInviteToken?Token='.$data["Token"];
-            $auth_email="Email";
-            $auth_token="APIToken";
+        $url=$api_url.'ValidateInviteToken?Token='.$data["Token"];
+        $auth_email="Email";
+        $auth_token="APIToken";
     }elseif($action=="game"){
-            $url=$api_url.'GameFeed?GameID='.$data["GameID"]."&GetHistory=true";
-            $auth_email="Email";
-            $auth_token="APIToken";
+        $url=$api_url.'GameFeed?GameID='.$data["GameID"];
+        if($get_history){
+            $url .= "&GetHistory=true";
+        }
+        $auth_email="Email";
+        $auth_token="APIToken";
     }
 
 
