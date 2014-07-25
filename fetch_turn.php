@@ -28,9 +28,14 @@ if($current_turn_db == NULL){
 
 //fetch game json
 $data=array("GameID"=>$game_id);
-//$game_data=post_request_data($data, 'game', TRUE);
-include 'test_data.php';
-$game_data = $test_data;
+$game_data=post_request_data($data, 'game', TRUE);
+//file_put_contents("test_data.json", json_encode($game_data));
+//include 'test_data.php';
+//$game_data = $test_data;
+//$game_data = json_decode(file_get_contents("test_data.json"), true);
+//var_dump($game_data);
+
+$game_name = $game_data['name'];
 
 //fetch players from db
 $game_players = query_db("game_players",$g_id,"player_id",FALSE);
@@ -41,7 +46,8 @@ if(!$game_players){
 
 $players = array();
 foreach($game_players as $player){
-    $players[$player]=$player;
+    $player_short = substr(substr($player, 2, 99), 0, -2);
+    $players[$player_short] = $player;
 }
 
 // sort out turn data: warlight lags 1 turn behind in their API, so API turn 19 is turn 20 in game
@@ -52,19 +58,44 @@ if($current_turn_db >= ($api_turn + 1)){
 }
 
 $turn = $current_turn_db - 1;
-while($turn < $api_turn){
+while($turn <= $api_turn){
+    $game_data_standing = $game_data["standing".$turn];
+    if(isset($game_data["turn".$turn])){
+        $game_data_turn = $game_data["turn".$turn];
+    }else{
+        $game_data_turn = false;
+    }
     
     //fetch possitions and record
-    $turn_possitions=$game_data["standing".$turn];
-    $owning=array();
+    $owning = record_possitions($game_data_standing, $turn, $players, $game_id);
+    
+    if($game_data_turn){
+        //fetch deployments and record
+        record_deploy($game_data_turn, $game_players, $players, $game_id, $turn);
+
+        //fetch movements and record
+        record_moves($game_data_turn, $players, $owning, $game_id, $turn);
+
+        //fetch cards and record
+        record_cards($Cards, $game_data_turn, $players, $turn, $game_id);
+    }
+
+    //update turn
+    set_turn($game_id, $turn);
+    $turn++;
+}
+
+function record_possitions($turn_possitions, $turn, $players, $game_id){
+    include 'mysql_config.php';
     $current_turn_db = $turn + 1;
+    $owning=array();
     foreach($turn_possitions as $possition){
 
-        if($possition["ownedBy"]!="Neutral"){
-            $p_terr_id=$possition["terrID"];
-            $p_ownedBy=$players[$possition["ownedBy"]];
-            $p_armies=$possition["armies"];
-            $owning[$p_terr_id]=$p_ownedBy;
+        if($possition["ownedBy"]!= "Neutral"){
+            $p_terr_id = $possition["terrID"];
+            $p_ownedBy = $players[$possition["ownedBy"]];
+            $p_armies = $possition["armies"];
+            $owning[$p_terr_id] = $p_ownedBy;
 
             $query = "INSERT INTO `$database`.`record_possessions` (`ID`, `game_id`, `turn`, `terr_id`, `ownedBy`, "
                     . "`armies`) VALUES (NULL, '$game_id', '$current_turn_db', '$p_terr_id','$p_ownedBy','$p_armies')";
@@ -75,24 +106,7 @@ while($turn < $api_turn){
             }
         }
     }
-    
-    
-    
-    //fetch deployments and record
-    $turn_deployments = $game_data["turn".$turn];
-    record_deploy($turn_deployments, $game_players, $players, $game_id, $turn);
-    
-    //fetch movements and record
-    $turn_moves=$game_data["turn".$turn];
-    record_moves($turn_moves, $players, $owning, $game_id, $turn);
-    
-    //fetch cards and record
-    $turn_cards = $game_data["turn".$turn];
-    record_cards($Cards, $turn_cards, $players, $turn, $game_id);
-
-    //update turn
-    $turn++;
-    set_turn($game_id, $turn);
+    return $owning;
 }
 
 function record_deploy($turn_deployments, $game_players, $players, $game_id, $turn){
@@ -100,12 +114,12 @@ function record_deploy($turn_deployments, $game_players, $players, $game_id, $tu
     $current_turn_db = $turn + 1;
     $income=array();
     foreach($game_players as $player){
-        $income[$player]=0;
+        $income[$player] = 0;
     }
     foreach($turn_deployments as $key=>$turn_deployment){
-        if(substr($key,0,15)=="GameOrderDeploy"){
-        $c_player=$players[$turn_deployment["playerID"]];
-        $income[$c_player]+=$turn_deployment["armies"];
+        if( $key == "WarLight.Shared.GameOrderDeploy" ){
+            $c_player=$players[$turn_deployment["playerID"]];
+            $income[$c_player]+=$turn_deployment["armies"];
         }
     }
     foreach($game_players as $player){
@@ -123,9 +137,9 @@ function record_moves($turn_moves, $players, $owning, $game_id, $turn){
     include 'mysql_config.php';
     $current_turn_db = $turn + 1;
     foreach($turn_moves as $key=>$turn_move){
-        if(substr($key,0,23)=="GameOrderAttackTransfer"){
+        if($key == "WarLight.Shared.GameOrderAttackTransfer"){
             $attacker = $players[$turn_move["playerID"]];
-            if($owning[$turn_move["attackTo"]]==""){
+            if(!isset($owning[$turn_move["attackTo"]])){
                 $deffender="Neutral";
             }else{
                 $deffender=$owning[$turn_move["attackTo"]];
@@ -179,7 +193,10 @@ function set_turn($game_id, $turn){
         exit();
     }
 }
+echo "</br> Game number $game_id ($game_name) has been updated to turn $turn.";
 
 //<!---END OF PAGE CONTENT WHEN LOGED-->
 
 include("footer.php");
+?>
+<br /><a href="index.php">Back</a>

@@ -18,7 +18,13 @@ if((!$loged) || ($role > ROLE_USER)){
 	<b>Add new Warlight game</b><br/>
 	Game ID:
 	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="fetch">
+	<input name=action type=submit value="Go">
+</form>
+<form name=delete_game action=delete_game.php method=get>
+	<b>Delete a Warlight game from our database</b><br/>
+	Game ID:
+	<INPUT TYPE=text name=game_id>
+	<input name=action type=submit value="Go">
 </form>
 <?php } ?>
 <?php if($role < ROLE_ADVANCED){ ?>
@@ -26,14 +32,14 @@ if((!$loged) || ($role > ROLE_USER)){
 	<b>Update game from warlight</b><br/>
 	Game ID:
 	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="fetch">
+	<input name=action type=submit value="Go">
 </form>
 <?php } ?>
 <form name=watch_game action=game.php method=get>
 	<b>Watch game scores</b><br/>
 	Game ID:
 	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="watch">
+	<input name=action type=submit value="Go">
 </form>
 <!---END OF PAGE CONTENT WHEN LOGED-->
 <?php

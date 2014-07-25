@@ -24,8 +24,8 @@ if(isset($_POST["action"])){
 if(($action=="add_map")&&($_POST["game_id"]!='')) {
 
     $game_id=$_POST["game_id"];
-    $data=array("GameID"=>$game_id);
-    $game_data=post_request_data($data, 'game', FALSE);
+    $data = array("GameID"=>$game_id);
+    $game_data = post_request_data($data, 'game', TRUE);
     if($game_data==FALSE){
         echo "Incorrect game ID";
     }else{

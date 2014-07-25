@@ -7,7 +7,7 @@ function condb(){
     $mysqli = new mysqli($host, $username, $password, $database);
     if ($mysqli->connect_errno) {
         printf("Connect failed: %s\n", $mysqli->connect_error);
-        exit();
+        return false;
     }
     return $mysqli;
 }
@@ -15,6 +15,7 @@ function condb(){
 //for insert statements
 function insert_db($query){
     $mysqli = condb();
+    //echo "</br> $query";
     $result = $mysqli->query($query);
     
     $thread = $mysqli->thread_id;
@@ -55,8 +56,8 @@ function query_db($table, $keys, $queried_key, $single){
                 break;
             default :
                 if($single){
-                    header("Location: error.php?err=ALERT! Duplicated ($num) $queried_key with keys: $w_keys with from $table");
-                    $return_val = NULL;
+                    $return_val_arr = $result->fetch_assoc();
+                    $return_val = $return_val_arr[0];
                 }else{
                     $result_arr = array();
                     while ($row = $result->fetch_assoc()){
