@@ -1,7 +1,7 @@
 <?php 
 include("header.php");
 include 'mysql_config.php';
-if((!$loged) || ($role > ROLE_ADVANCED)){
+if((!$loged) || ($role > ROLE_ADMIN)){
     header("Location: error.php?err=You're not authorized to access this page");
     exit();
 }
@@ -28,10 +28,23 @@ if($current_turn_db == NULL){
 
 //fetch game json
 $data=array("GameID"=>$game_id);
-$game_data=post_request_data($data, 'game', TRUE);
+//$game_data=post_request_data($data, 'game', TRUE);
 //file_put_contents("test_data.json", json_encode($game_data));
-//$game_data = json_decode(file_get_contents("test_data.json"), true);
-//var_dump($game_data);
+$game_data = json_decode(file_get_contents("test_data.json"), true);
+
+if(!$game_data){
+    header("Location: error.php?err=Unable to retrieve game data from Warlight! (game ID: $game_id)");
+    exit();
+}
+
+// if the game is finished, we set it
+if($game_data['state'] == "Finished"){
+    $query = "UPDATE `$database`.`games` SET `finished` = 1 WHERE `game_id` = $game_id";
+    if(!insert_db($query)){
+        header("Location: error.php?err=Could not set game as finished ($query)");
+        exit();
+    }
+}
 
 $game_name = $game_data['name'];
 
@@ -80,7 +93,21 @@ while($turn <= $api_turn){
 
     //update turn
     set_turn($game_id, $turn);
+    
+    // create default victory condition if doesn't exist
+    create_default_conditions($game_id, $turn);
+    
     $turn++;
+}
+
+function create_default_conditions($game_id, $turn){
+    include 'mysql_config.php';
+    $current_turn_db = $turn + 1;
+    $t_search = array("game_id" => $game_id, "turn" => $current_turn_db);
+    if(!query_db("v_conditions",$t_search,'*',FALSE)){
+        $query = "INSERT INTO `$database`.`v_conditions` (`game_id`, `turn`) VALUES ('$game_id', '$current_turn_db')";
+        insert_db($query);
+    }
 }
 
 function record_possitions($turn_possitions, $turn, $players, $game_id){

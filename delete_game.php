@@ -9,34 +9,54 @@ if((!$loged) || ($role > ROLE_ADMIN)){
 
 // check if we have game ID
 if(isset($_GET["game_id"])){
-    $game_id=$_GET["game_id"];
+    $game_id = $_GET["game_id"];
 }else{
     header("Location: error.php?err=No game ID for deleting");
     exit();
 }
 
-$querya = "DELETE FROM `$database`.`games` WHERE game_id = $game_id;";
-$result = insert_db($querya);
+if(!isset($_GET['delete'])){
+    ?>
+    <form name=confirm_delete action="delete_game.php" method=get>
+	<b>Are you sure you want to delete this game?</b><br/>
+        <input type="checkbox" name="conditions" value="delete">Also delete victory conditions</br>
+        <input type="hidden"  name="game_id" value="<?php echo $game_id; ?>">
+	<input name=delete type=submit value="confirm">
+    </form>
+    <?php
+}else{
 
-$queryb = "DELETE FROM `$database`.`game_players` WHERE game_id = $game_id;";
-insert_db($queryb);
+    $querya = "DELETE FROM `$database`.`games` WHERE game_id = $game_id;";
+    $result = insert_db($querya);
 
-$queryc = "DELETE FROM `$database`.`record_cards` WHERE game_id = $game_id;";
-insert_db($queryc);
+    $queryb = "DELETE FROM `$database`.`game_players` WHERE game_id = $game_id;";
+    insert_db($queryb);
 
-$queryd = "DELETE FROM `$database`.`record_income` WHERE game_id = $game_id;";
-insert_db($queryd);
+    $queryc = "DELETE FROM `$database`.`record_cards` WHERE game_id = $game_id;";
+    insert_db($queryc);
 
-$querye = "DELETE FROM `$database`.`record_move` WHERE game_id = $game_id;";
-insert_db($querye);
+    $queryd = "DELETE FROM `$database`.`record_income` WHERE game_id = $game_id;";
+    insert_db($queryd);
 
-$queryf = "DELETE FROM `$database`.`record_possessions` WHERE game_id = $game_id;";
-insert_db($queryf);
+    $querye = "DELETE FROM `$database`.`record_move` WHERE game_id = $game_id;";
+    insert_db($querye);
 
-$queryg = "DELETE FROM `$database`.`game_settings` WHERE game_id = $game_id;";
-insert_db($queryg);
+    $queryf = "DELETE FROM `$database`.`record_possessions` WHERE game_id = $game_id;";
+    insert_db($queryf);
 
-echo "Game number $game_id has been deleted.";
+    $queryg = "DELETE FROM `$database`.`game_settings` WHERE game_id = $game_id;";
+    insert_db($queryg);
+
+    if(isset($_GET['conditions'])){
+        if($_GET['conditions'] == "delete"){
+            $queryh = "DELETE FROM `$database`.`v_conditions` WHERE game_id = $game_id;";
+            insert_db($queryh);
+        }
+    }
+
+    echo "Game number $game_id has been deleted.";
+    
+}
 ?>
 <br /><a href="manage_games.php">Back</a>
 

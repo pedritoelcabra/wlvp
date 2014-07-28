@@ -21,9 +21,6 @@ if((!$loged) || ($role > ROLE_USER)){
 	<INPUT TYPE=text name=game_id>
 	<input name=action type=submit value="Delete">
 </form>
-<?php } ?>
-
-<?php if($role <= ROLE_ADVANCED){ ?>
 <form name=fetch_turn action=fetch_turn.php method=get>
 	<b>Update game from Warlight </b> <br/>(Adding and updating games consumes a lot of Warlight bandwith - use responsibly!)<br/>
 	Game ID:
@@ -47,13 +44,17 @@ if($games){
         $name = $game['game_name'];
         $wl_id = $game['game_id'];
         $turn = $game['turn'];
+        $finished = $game['finished'];
         echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td><td>$turn</td>";
         if($role == ROLE_ADMIN){
             echo "<td><a href=\"delete_game.php?game_id=$wl_id&action=Delete\">Delete</a></td>";
+            if(!$finished){
+                echo "<td><a href=\"fetch_turn.php?game_id=$wl_id&action=Update\">Update</a></td>";
+            }else{
+                echo "<td>Finished</td>";
+            }
         }
-        if($role <= ROLE_ADVANCED){
-            echo "<td><a href=\"fetch_turn.php?game_id=$wl_id&action=Update\">Update</a></td>";
-        }
+        echo "<td><a href=\"conditions.php?game_id=$wl_id\">Victory conditions</a></td>";
         echo "</tr>";
 
     }

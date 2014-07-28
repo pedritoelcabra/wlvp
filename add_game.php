@@ -23,21 +23,40 @@ if(check_db_entry("games","game_id",$game_id)){
 
 // get game data from Warlight
 $data = array("GameID" => $game_id);
-$game_data = post_request_data($data, 'game', FALSE);
-//$game_data = json_decode(file_get_contents("test_data.json"), true);
+//$game_data = post_request_data($data, 'game', FALSE);
+$game_data = json_decode(file_get_contents("test_data.json"), true);
 
-if($game_data == FALSE){
-    header("Location: error.php?err=This game doesn't seem to exist on Warlight! (game ID: $game_id)");
+if(!$game_data){
+    header("Location: error.php?err=Unable to retrieve game data from Warlight! (game ID: $game_id)");
+    exit();
+}
+
+// check if we have the map in the database
+$map_data = $game_data['map'];
+$map_id = $map_data['id'];
+if(!check_db_entry("maps", "wl_id", $map_id)){
+    header("Location: error.php?err=The map for this game is not in our database.");
     exit();
 }
 
 // we create a new game in the database
 $turn = 1;
 $game_name = $game_data['name'];
-$query = "INSERT INTO `$database`.`games` (`game_id`, `turn`, `game_name`) VALUES ('$game_id', '$turn', '$game_name')";
+$query = "INSERT INTO `$database`.`games` (`game_id`, `turn`, `game_name`, `finished`, `map_id`) "
+        . "VALUES ('$game_id', '$turn', '$game_name', '0', '$map_id')";
 if(!insert_db($query)){
     header("Location: error.php?err=Could not insert game into database ($query)");
     exit();
+}
+
+// create a victory conditions entry
+$t_search = array("game_id" => $game_id, "turn" => 1);
+if(!query_db("v_conditions",$t_search,'*',FALSE)){
+    $query = "INSERT INTO `$database`.`v_conditions` (`game_id`, `turn`) VALUES ('$game_id', '1')";
+    if(!insert_db($query)){
+        header("Location: error.php?err=Could not insert conditions into database ($query)");
+        exit();
+    }
 }
 
 // we create all the players in the database

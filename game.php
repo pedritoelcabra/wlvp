@@ -15,15 +15,14 @@ if(isset($_GET["game_id"])){
     exit();
 }
 
+$g_id = array("game_id" => $game_id);
+$last_turn = query_db("games",$g_id,"turn",TRUE);
+
 if(isset($_GET["turn"])){
     $turn = $_GET["turn"];
 }else{
-    $turn = "";
+    $turn = $last_turn;
 }
-
-$g_id = array("game_id" => $game_id);
-$last_turn = query_db("games",$g_id,"turn",TRUE);
-if($turn==""){$turn=$last_turn;}
 
 if($last_turn < 1){
     header("Location: error.php?err=No turns recorded for this game yet");
@@ -37,23 +36,24 @@ for($i=1; $i<=$last_turn; $i++){
     <?php 
 } ?>
 </tr></table>
+</br><h1>Standings and scores</h1></br>
 <table>
 <tr><td>Player</td><td>Territories</td><td>Armies</td></tr>
 <?php
-$game_players=query_db("game_players",$g_id,"player_id",FALSE);
+$game_players = query_db("game_players",$g_id,"player_id",FALSE);
 foreach($game_players as $player){
-    $p_key=array('player_id'=>$player);
+    $p_key = array('player_id'=>$player);
     $player_name = query_db("game_players",$p_key,"player_name",TRUE);
-    $t_search=array(
-                    "game_id"=>$game_id,
+    $t_search = array(
+                    "game_id" => $game_id,
                     "turn" => $turn,
-                    "ownedBy"=> $player
+                    "ownedBy" => $player
                     );
     //	var_dump($t_search);
     $territories = query_db("record_possessions",$t_search,'armies',FALSE);
     //	var_dump($territories);
-    $t=0;
-    $a=0;
+    $t = 0;
+    $a = 0;
     if($territories){
         foreach($territories as $armies){
             $t++;

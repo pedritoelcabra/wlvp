@@ -30,13 +30,6 @@ if($role == ROLE_ADMIN){
     } 
     ?>
 </ul>
-
-<form name=watch_game action=game.php method=get>
-	<b>Watch game scores</b><br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Go">
-</form>
 <!---END OF PAGE CONTENT WHEN LOGED-->
 <?php
 include("footer.php");

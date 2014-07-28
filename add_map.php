@@ -71,7 +71,7 @@ if(isset($_GET["game_id"])) {
 }
 
 echo '<table>';
-echo '<tr><td>Map name</td><td>Map ID</td><td>Territories</td><td></td></tr>';
+echo '<tr><td><b>Map name</b></td><td><b>Map ID</b></td><td><b>Territories</b></td><td></td></tr>';
 $maps = query_db("maps", NULL, "*", FALSE);
 if(isset($maps['name'])){
     $raw = $maps;

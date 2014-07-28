@@ -27,3 +27,11 @@ tr, td{
     border: 1px solid black;
     padding: 5px;
 }
+
+.ra{
+    text-align: right;
+}
+
+.ca{
+    text-align: center;
+}

@@ -84,9 +84,9 @@ function query_db($table, $keys, $queried_key, $single){
 }
 
 //query db by table & key -> returns true if queried_key value exist
-function check_db_entry($table,$key,$value){
+function check_db_entry($table, $key, $value){
     $mysqli = condb();
-    $query="SELECT * FROM ".$table." WHERE ".$key." = '".$value."'";
+    $query="SELECT * FROM $table WHERE $key = '$value'";
     $result = $mysqli->query($query);
     $return_val = ($result->num_rows > 0);
  
