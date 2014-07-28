@@ -6,35 +6,31 @@ if((!$loged) || ($role > ROLE_USER)){
 }
 ?>
 <!---PAGE CONTENT WHEN LOGED-->
+<?php
+if($role == ROLE_ADMIN){
+    echo "Welcome page admin! "
+    . "</br>You can use the links below to confirm new members and add new games or update existing ones."
+    . "</br>Please be responsible when adding new games as this consumes a 'significant amount of bandwith', to quote the "
+    . "</br>Warlight terms of use.";
+    
+}
+?>
 <ul>
-<li><a href="">Home</a></li>
-<?php if($role < ROLE_ADVANCED){ ?>
-<li><a href="add_player.php">Add Player</a></li>
-<li><a href="add_map.php">Add Map</a></li>
-<?php } ?>
+    <?php 
+    if($role == ROLE_ADMIN){ 
+        ?>
+        <li><a href="manage_members.php">Members</a></li>
+        <li><a href="add_map.php">Maps</a></li>
+        <?php 
+    } 
+    if($role <= ROLE_USER){ 
+        ?>
+        <li><a href="manage_games.php">Games</a></li>
+        <?php 
+    } 
+    ?>
 </ul>
-<?php if($role == ROLE_ADMIN){ ?>
-<form name=add_game action=add_game.php method=get>
-	<b>Add new Warlight game</b><br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Go">
-</form>
-<form name=delete_game action=delete_game.php method=get>
-	<b>Delete a Warlight game from our database</b><br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Go">
-</form>
-<?php } ?>
-<?php if($role < ROLE_ADVANCED){ ?>
-<form name=fetch_turn action=fetch_turn.php method=get>
-	<b>Update game from warlight</b><br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Go">
-</form>
-<?php } ?>
+
 <form name=watch_game action=game.php method=get>
 	<b>Watch game scores</b><br/>
 	Game ID:

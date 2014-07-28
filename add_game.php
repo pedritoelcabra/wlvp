@@ -24,8 +24,6 @@ if(check_db_entry("games","game_id",$game_id)){
 // get game data from Warlight
 $data = array("GameID" => $game_id);
 $game_data = post_request_data($data, 'game', FALSE);
-//include 'test_data.php';
-//$game_data = $test_data;
 //$game_data = json_decode(file_get_contents("test_data.json"), true);
 
 if($game_data == FALSE){
@@ -60,4 +58,7 @@ foreach ($players as $player){
 echo "The game '$game_name' has been succesfully inserted into the database." ;
 ?>
 
-<br /><a href="index.php">Back</a>
+<br /><a href="manage_games.php">Back</a>
+
+
+<?php include("footer.php");?>

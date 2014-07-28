@@ -61,7 +61,11 @@ function query_db($table, $keys, $queried_key, $single){
                 }else{
                     $result_arr = array();
                     while ($row = $result->fetch_assoc()){
-                        $result_arr[] = $row[$queried_key];
+                        if($queried_key == "*"){
+                            $result_arr[] = $row;
+                        }else{
+                            $result_arr[] = $row[$queried_key];
+                        }
                     }
                     $return_val = $result_arr;
                 }
@@ -92,4 +96,3 @@ function check_db_entry($table,$key,$value){
     $mysqli->close();
     return $return_val;
 }
-?>

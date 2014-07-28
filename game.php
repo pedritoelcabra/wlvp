@@ -21,7 +21,7 @@ if(isset($_GET["turn"])){
     $turn = "";
 }
 
-$g_id=array("game_id"=>$game_id);
+$g_id = array("game_id" => $game_id);
 $last_turn = query_db("games",$g_id,"turn",TRUE);
 if($turn==""){$turn=$last_turn;}
 
@@ -65,6 +65,10 @@ foreach($game_players as $player){
 echo "</table>";
 
 //<!---END OF PAGE CONTENT WHEN LOGED-->
+?>
+
+<br /><a href="index.php">Back</a>
+<?php
 
 include("footer.php");
 

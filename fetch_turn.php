@@ -30,8 +30,6 @@ if($current_turn_db == NULL){
 $data=array("GameID"=>$game_id);
 $game_data=post_request_data($data, 'game', TRUE);
 //file_put_contents("test_data.json", json_encode($game_data));
-//include 'test_data.php';
-//$game_data = $test_data;
 //$game_data = json_decode(file_get_contents("test_data.json"), true);
 //var_dump($game_data);
 
@@ -163,6 +161,10 @@ function record_moves($turn_moves, $players, $owning, $game_id, $turn){
 
 function record_cards($Cards, $turn_cards, $players, $turn, $game_id){
     include 'mysql_config.php';
+//    var_dump($Cards);
+//    echo"------------------------";
+//    var_dump($turn_cards);
+//    echo"------------------------";
     $current_turn_db = $turn + 1;
     foreach($Cards as $C_key => $Card){
         $length = strlen($Card);
@@ -199,4 +201,6 @@ echo "</br> Game number $game_id ($game_name) has been updated to turn $turn.";
 
 include("footer.php");
 ?>
-<br /><a href="index.php">Back</a>
+<br /><a href="manage_games.php">Back</a>
+
+<?php include("footer.php");?>

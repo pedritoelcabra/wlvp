@@ -38,4 +38,6 @@ insert_db($queryg);
 
 echo "Game number $game_id has been deleted.";
 ?>
-<br /><a href="index.php">Back</a>
+<br /><a href="manage_games.php">Back</a>
+
+<?php include("footer.php");?>

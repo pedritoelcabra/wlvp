@@ -1,3 +1,12 @@
+<html>
+    <head>
+        <title>Warlight Victory Point System by {rp} - The Roleplayers Guild</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div class="main">
 <?php
 /*
  * To be included on every page
@@ -77,7 +86,8 @@ if($loged == FALSE){
     if($confirmed=="pending"){
 
             echo "Welcome, ".query_db("players",$m_search,"name",TRUE)."<br/>";
-            echo "your login is valid, but your account has not been validated yet.";?>
+            echo "Your login is valid, but your account has not been validated yet."
+            . "</br> You need to contact an admin of {rp} before you can access the system.";?>
             <form name=login action=index.php method=post>
                     <input name=action type=submit value="Logout">
             </form>
@@ -86,8 +96,9 @@ if($loged == FALSE){
                 echo "Login incorrect<br/>";		
             }
     echo "You must log in";
-    include("intro.php");
+        include("intro.php");
     }
+    include("footer.php");
 }else{
     echo "<a href='http://www.veintegenarios.net/wl/'>Home</a><br/>";
     echo "Welcome, ".query_db("players",$m_search,"name",TRUE);
