@@ -52,7 +52,11 @@ if($members){
                 $promote_lvl = 8;
                 break;
         }
-        echo "<tr><td>$name</td><td>$wl_id</td><td>$role_name</td><td><a href=delete_member.php?id=$wl_id>Delete member</a></td>";
+        echo "<tr><td>$name</td><td>$wl_id</td><td>$role_name</td><td>";
+        if($role > 1){
+            echo "<a href=delete_member.php?id=$wl_id>Delete member";
+        }
+        echo "</a></td>";
         if(($role_name == "Unconfirmed") || ($role_name == "User") ){
             echo "<td><a href=manage_members.php?id=$wl_id&promote=$promote_lvl>$promote_text</a></td>";
         }

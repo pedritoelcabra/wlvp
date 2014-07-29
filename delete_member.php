@@ -13,6 +13,12 @@ if(isset($_GET['id'])){
     header("Location: error.php?err=No id sent");
     exit();
 }
+$id_s = array( "wl_id" => $member_id );
+$role = query_db('players', $id_s, 'role', TRUE);
+if($role == 1){
+    header("Location: error.php?err=Cannot delete admins!");
+    exit();
+}
 
 if(isset($_GET['action'])){
     $query = "DELETE FROM `$database`.`players` WHERE `wl_id` = $member_id;";
