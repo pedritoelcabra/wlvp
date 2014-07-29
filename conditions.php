@@ -24,6 +24,7 @@ if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
             $query = "UPDATE `$database`.`v_conditions` SET `army_val` = '$armies' "
                     . "WHERE `game_id` = $game_id$and";
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not update victory conditions($query)");
                 exit();
             }            
@@ -35,6 +36,7 @@ if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
             $query = "UPDATE `$database`.`v_conditions` SET `terr_val` = '$terrs' "
                     . "WHERE `game_id` = $game_id$and";
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not update victory conditions($query)");
                 exit();
             }            
@@ -46,6 +48,7 @@ if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
             $query = "UPDATE `$database`.`v_conditions` SET `card_val` = '$cards' "
                     . "WHERE `game_id` = $game_id$and";
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not update victory conditions($query)");
                 exit();
             }            
@@ -68,6 +71,7 @@ if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
             $query = "UPDATE `$database`.`v_conditions` SET `key_terrs` = '$new_value' "
                     . "WHERE `game_id` = $game_id$and";
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not update victory conditions($query)");
                 exit();
             }            
@@ -127,22 +131,28 @@ if(isset($_GET["turn"])){
     }
 }
 
+echo '<br /><a href="manage_games.php">Games</a>';
 echo    "<h1>$game_name</h1></br>";
 
 // Links to every turn
 $turn_data = "";
 $counter = 1;
+echo "<table><tr>";
 foreach ($conditions_data as $cond_data){
     if($counter == $turn){
-        echo "Turn $counter ";
+        echo "<td>Turn $counter</td>";
     }else{
-        echo "<a href=\"?game_id=$game_id&turn=$counter\">Turn $counter</a> ";
+        echo "<td><a href=\"?game_id=$game_id&turn=$counter\">Turn $counter</a></td>";
+    }
+    if(!($counter%10)){
+        echo "</tr><tr>";
     }
     if($cond_data['turn'] == $turn){
         $turn_data = $cond_data;
     }
     $counter++;
 }
+echo "</tr></table>";
 if( ($role == ROLE_ADMIN) && ($game_data['finished'] != "1") ){
     echo "</br><a href=\"?game_id=$game_id&turn=add\">Add turn</a></br></br>";
 }
@@ -166,7 +176,7 @@ echo "</br>Points for each controlled territory: $terr_val</br>";
 if($role <= ROLE_ADVANCED){ ?>
         <INPUT TYPE=text name=terrs maxlength="4" size="4" value="<?php echo "$terr_val"; ?>">
 <?php }
-echo "</br>Points for each owned card: $card_val</br>";
+echo "</br>Points for each discarded card: $card_val</br>";
 if($role <= ROLE_ADVANCED){ ?>
         <INPUT TYPE=text name=cards maxlength="4" size="4" value="<?php echo "$card_val"; ?>">
         
@@ -243,7 +253,7 @@ if($role <= ROLE_ADVANCED){ ?>
 
 ?>
 
-<br /><br /><br /><a href="manage_games.php">Manage games</a>
+<br /><br /><br /><a href="manage_games.php">Games</a>
 <br /><a href="index.php">Index</a>
 
 <?php include("footer.php");

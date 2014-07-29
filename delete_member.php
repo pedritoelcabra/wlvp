@@ -17,6 +17,7 @@ if(isset($_GET['id'])){
 if(isset($_GET['action'])){
     $query = "DELETE FROM `$database`.`players` WHERE `wl_id` = $member_id;";
     if(!insert_db($query)){
+        if(!DEBUG){$query = "";}
         header("Location: error.php?err=Could not delete member from database ($query)");
         exit();
     }else {

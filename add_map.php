@@ -27,33 +27,40 @@ if(isset($_GET["game_id"])) {
         $data = array("GameID"=>$game_id);
         $game_data = post_request_data($data, 'game', TRUE);
         if($game_data==FALSE){
-            echo "Incorrect game ID";
+            header("Location: error.php?err=no_game_data");
+            exit();
         }else{
+            if(!isset($game_data["map"])){
+                header("Location: error.php?err=Game data contains no map data! Maybe this game is not finished?");
+                exit();
+            }
             $map_details = $game_data["map"];
             $wl_id = $map_details["id"];
-            $name = $map_details["name"];
+            $name = escape_str($map_details["name"]);
             $territories = $map_details["territories"];
             if(!check_db_entry("maps","wl_id",$wl_id)){
                 $n_territories=0;
                 foreach($territories as $territory){
-                    $t_name=$territory["name"];
-                    $t_id=$territory["id"];
+                    $t_name = escape_str($territory["name"]);
+                    $t_id = $territory["id"];
 
                     $query = "INSERT INTO `$database`.`territories` (`ID`, `wl_id`, `name`, `map_id`) VALUES (NULL, '".$t_id."', '".$t_name."', '".$wl_id."')";
                     if (insert_db($query)){
                         $n_territories++;
+                    }else{
+                        if(!DEBUG){$query = "";}
+                        header("Location: error.php?err=An error occurred while inserting territories into the database! ($query)");
+                        exit();
                     }
                 }
-                if($n_territories != count($territories)){
-                    echo "An error occurred while inserting territories into the database";
-                }else{
-                    $query = "INSERT INTO `$database`.`maps` (`ID`, `wl_id`, `name`, `n_territories`, `pic`) VALUES (NULL, '".$wl_id."', '".$name."', '".$n_territories."', '')";
+                $query = "INSERT INTO `$database`.`maps` (`ID`, `wl_id`, `name`, `n_territories`, `pic`) VALUES (NULL, '".$wl_id."', '".$name."', '".$n_territories."', '')";
 
-                    if(insert_db($query)){
-                        echo "The map $name is now available." ;
-                    }else{
-                        echo "An error occurred while inserting the map into the database";
-                    }
+                if(insert_db($query)){
+                    echo "The map $name is now available." ;
+                }else{
+                    if(!DEBUG){$query = "";}
+                    header("Location: error.php?err=An error occurred while inserting the map into the database! ($query)");
+                    exit();
                 }
             }else{
                 echo "The map $name was already available.";

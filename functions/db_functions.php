@@ -12,6 +12,17 @@ function condb(){
     return $mysqli;
 }
 
+function escape_str($str){
+    $mysqli = condb();
+    
+    $result = $mysqli->real_escape_string($str);
+    
+    $thread = $mysqli->thread_id;
+    $mysqli->kill($thread);
+    $mysqli->close();
+    return $result;
+}
+
 //for insert statements
 function insert_db($query){
     $mysqli = condb();

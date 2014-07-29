@@ -17,6 +17,9 @@
  *      4 or less can also add maps and players
  *      1 can also add new games
  */
+
+define('DEBUG', FALSE);
+
 define('ROLE_UNCONFIRMED', 9);
 define('ROLE_USER', 8);
 define('ROLE_ADVANCED', 4);
@@ -95,7 +98,8 @@ if($loged == FALSE){
             if($confirmed=="wrong"){
                 echo "Login incorrect<br/>";		
             }
-    echo "You must log in";
+    echo "Welcome to the Warlight Victory Point System by {rp}</br></br>";
+    echo "You must log in</br>";
         include("intro.php");
     }
     include("footer.php");
