@@ -96,6 +96,9 @@ if(isset($card_data['turn'])){
     $card_data = array();
     $card_data[] = $raw;
 }
+if(!$card_data){
+    $card_data = array();
+}
 
 // get player data
 $p_search = array( "game_id" => $game_id );

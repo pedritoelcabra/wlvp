@@ -1,12 +1,3 @@
-<html>
-    <head>
-        <title>Warlight Victory Point System by {rp} - The Roleplayers Guild</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width">
-        <link rel="stylesheet" type="text/css" href="style.css">
-    </head>
-    <body>
-        <div class="main">
 <?php
 /*
  * To be included on every page
@@ -84,6 +75,19 @@ if(isset($_SESSION["mail"])){
     $loged=FALSE;	
     $confirmed = "";
 }
+?>
+
+<html>
+    <head>
+        <title>Warlight Victory Point System by {rp} - The Roleplayers Guild</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div class="main">
+
+<?php
 
 if($loged == FALSE){
     if($confirmed=="pending"){
@@ -104,7 +108,7 @@ if($loged == FALSE){
     }
     include("footer.php");
 }else{
-    echo "<a href='http://www.veintegenarios.net/wl/'>Home</a><br/>";
+    echo "<a href='http://elsocio.es/wlvp'>Home</a><br/>";
     echo "Welcome, ".query_db("players",$m_search,"name",TRUE);
     ?>
     <form name=login action=index.php method=post>

@@ -45,7 +45,11 @@ if($games){
         $wl_id = $game['game_id'];
         $turn = $game['turn'];
         $finished = $game['finished'];
-        echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td><td>$turn</td>";
+        if(!$finished){
+            echo "<tr><td>$name</td><td>$wl_id</td><td>$turn</td>";
+        }else{
+            echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td><td>$turn</td>";
+        }
         if($role == ROLE_ADMIN){
             echo "<td><a href=\"delete_game.php?game_id=$wl_id&action=Delete\">Delete</a></td>";
             if(!$finished){
