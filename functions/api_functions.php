@@ -22,7 +22,7 @@ function do_post_request($url, $data, $optional_headers = null)
 
 function create_game($data){
 //simplify only 2 create games
-    include_once 'api_data.php';
+    include 'api_data.php';
 	$url=$apiurl.'CreateGame';
 	$auth_email="hostEmail";
 	$auth_token="hostAPIToken";
@@ -42,7 +42,7 @@ function create_game($data){
 }
 
 function post_request_data($data, $action, $get_history){
-    include_once 'api_data.php';
+    include 'api_data.php';
 
     $postdata = http_build_query(
         array(
@@ -109,7 +109,7 @@ function post_request_data($data, $action, $get_history){
 
     $game_details=json_decode($result, true);
     if(isset($game_details["error"])){
-        echo $game_details["error"]."?";
+        //echo $game_details["error"]."?";
         return FALSE;
     }else{
         return $game_details;

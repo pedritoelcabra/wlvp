@@ -6,11 +6,13 @@ if((!$loged) || ($role > ROLE_USER)){
     exit();
 }
 //<!---PAGE CONTENT WHEN LOGED-->
-?>
+if($role <= ROLE_ADVANCED){
+    echo "<b><a href=\"create_game.php\">Create a new game through the Warlight API</a></b></br></br>";
+}
 
-<?php if($role == ROLE_ADMIN){ ?>
+if($role == ROLE_ADMIN){ ?>
 <form name=add_game action=add_game.php method=get>
-	<b>Add new Warlight game</b><br/> (Adding and updating games consumes a lot of Warlight bandwith - use responsibly!)<br/>
+	<b>Add game from Warlight</b><br/> (Adding and updating games consumes a lot of Warlight bandwith - use responsibly!)<br/>
 	Game ID:
 	<INPUT TYPE=text name=game_id>
 	<input name=action type=submit value="Add">

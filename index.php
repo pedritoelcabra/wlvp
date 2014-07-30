@@ -22,7 +22,7 @@ if($role == ROLE_ADMIN){
         <li><a href="manage_members.php">Members</a></li>
         <li><a href="add_map.php">Maps</a></li>
         <?php 
-    } 
+    }
     if($role <= ROLE_USER){ 
         ?>
         <li><a href="manage_games.php">Games</a></li>

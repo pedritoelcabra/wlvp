@@ -9,7 +9,7 @@
  *      1 can also add new games
  */
 
-define('DEBUG', FALSE);
+define('DEBUG', TRUE);
 
 define('ROLE_UNCONFIRMED', 9);
 define('ROLE_USER', 8);
@@ -51,8 +51,8 @@ if(isset($_SESSION["mail"])){
     $loged=FALSE;	
     
     //Check user
-    $user=$_SESSION["mail"];
-    $pass=$_SESSION["pass"];
+    $user = $_SESSION["mail"];
+    $pass = $_SESSION["pass"];
     $m_search = array("mail"=>$_SESSION["mail"]);
 
     $db_pwd = query_db('players', $m_search, 'pwd', TRUE);

@@ -1,0 +1,10 @@
+{
+   "hostEmail": "your e-mail",
+   "hostAPIToken": "your api-token",
+   "templateID": "template id",
+   "gameName": "game name",
+   "personalMessage": "game descriptions",
+   "players":  [
+     { "token": "player token", "team": "None" },
+     { "token": "player token", "team": "None" } ]
+}
