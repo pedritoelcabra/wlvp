@@ -57,6 +57,7 @@ if(isset($_SESSION["mail"])){
 
     $db_pwd = query_db('players', $m_search, 'pwd', TRUE);
     $role = query_db('players', $m_search, 'role', TRUE);
+    $wl_id = query_db('players', $m_search, 'wl_id', TRUE);
     
     if($db_pwd == NULL){
         session_destroy();

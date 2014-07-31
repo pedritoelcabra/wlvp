@@ -6,8 +6,35 @@ if((!$loged) || ($role > ROLE_USER)){
     exit();
 }
 //<!---PAGE CONTENT WHEN LOGED-->
+
+// check if we have game ID
+if(isset($_GET["game_id"])){
+    $game_id = $_GET["game_id"];
+}else{
+    if(isset($_POST["game_id"])){
+        $game_id = $_POST["game_id"];
+    }else{
+        header("Location: error.php?err=No game ID for editing conditions");
+        exit();
+    }
+}
+
+//get access permissions
+if($role == ROLE_ADMIN){
+    $access = true;
+}else{
+    $p_search = array( "game_id" => $game_id );
+    $permission = query_db("games", $p_search, "access", TRUE);
+    $permission = explode(":", $permission);
+    if(in_array($wl_id, $permission)){
+        $access = true;
+    }else{
+        $access = false;
+    }
+}
+
 // update database if post is set
-if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
+if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) && ($access) ){
     $turn = $_POST['turn'];
     $game_id = $_POST['game_id'];
     if( (!is_numeric($turn)) || (!is_numeric($game_id)) ){
@@ -81,18 +108,6 @@ if( (isset($_POST['turn'])) && (isset($_POST['game_id'])) ){
     exit();
 }
 
-// check if we have game ID
-if(isset($_GET["game_id"])){
-    $game_id = $_GET["game_id"];
-}else{
-    if(isset($_POST["game_id"])){
-        $game_id = $_POST["game_id"];
-    }else{
-        header("Location: error.php?err=No game ID for editing conditions");
-        exit();
-    }
-}
-
 // get game data
 $g_search = array( "game_id" => $game_id );
 $game_data = query_db("games", $g_search, "*", FALSE);
@@ -153,7 +168,7 @@ foreach ($conditions_data as $cond_data){
     $counter++;
 }
 echo "</tr></table>";
-if( ($role == ROLE_ADMIN) && ($game_data['finished'] != "1") ){
+if( ($access) && ($game_data['finished'] != "1") ){
     echo "</br><a href=\"?game_id=$game_id&turn=add\">Add turn</a></br></br>";
 }
 
@@ -168,16 +183,16 @@ $terr_val = $turn_data['terr_val'];
 $card_val = $turn_data['card_val'];
 
 echo "</br></br>Points for each owned army: $army_val";
-if($role <= ROLE_ADVANCED){ ?>
+if($access){ ?>
     <form name=update action=conditions.php method=post>
         <INPUT TYPE=text name=armies maxlength="4" size="4" value="<?php echo "$army_val"; ?>">
 <?php }
 echo "</br>Points for each controlled territory: $terr_val</br>";
-if($role <= ROLE_ADVANCED){ ?>
+if($access){ ?>
         <INPUT TYPE=text name=terrs maxlength="4" size="4" value="<?php echo "$terr_val"; ?>">
 <?php }
 echo "</br>Points for each discarded card: $card_val</br>";
-if($role <= ROLE_ADVANCED){ ?>
+if($access){ ?>
         <INPUT TYPE=text name=cards maxlength="4" size="4" value="<?php echo "$card_val"; ?>">
         
         <input type="hidden" name="game_id" value="<?php echo "$game_id"; ?>">
@@ -220,7 +235,7 @@ if($stored_values != NULL){
         $territory_values[$s_id] = $s_val;
     }
 }
-if($role <= ROLE_ADVANCED){ ?>
+if($access){ ?>
     <form name=update action=conditions.php method=post>
         <input type="hidden" name="game_id" value="<?php echo "$game_id"; ?>">
         <input type="hidden" name="turn" value="<?php echo "$turn"; ?>">
@@ -232,7 +247,7 @@ if($role <= ROLE_ADVANCED){ ?>
 echo '<table><tr class=\"ca\"><td><b></b></td><td><b>Point value</b></td></tr>';
 foreach ($territories as $id => $name){
     echo "<tr class=\"ca\"><td>$name</td>";
-    if($role <= ROLE_ADVANCED){ ?>
+    if($access){ ?>
         <td><INPUT TYPE=text name="<?php echo "$id"; ?>" value="<?php echo "$territory_values[$id]"; ?>" maxlength="4" size="4"></td>
     <?php }else{
         echo "<td>$territory_values[$id]</td>";
@@ -240,7 +255,7 @@ foreach ($territories as $id => $name){
     echo "</tr>";
 }
 echo '</table></br>';
-if($role <= ROLE_ADVANCED){ ?>
+if($access){ ?>
     <input name=action type=submit value="Set values"></br>
     <input type="checkbox" name="all" value="1">Apply setting to every turn (Overwrites data)</br>
     </form>
@@ -256,4 +271,5 @@ if($role <= ROLE_ADVANCED){ ?>
 <br /><br /><br /><a href="manage_games.php">Games</a>
 <br /><a href="index.php">Index</a>
 
-<?php include("footer.php");
+<?php 
+include("footer.php");

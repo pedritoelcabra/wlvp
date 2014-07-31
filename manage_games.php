@@ -59,6 +59,7 @@ if($games){
             }else{
                 echo "<td>Finished</td>";
             }
+            echo "<td><a href=\"permissions.php?game_id=$wl_id\">Set permissions</a></td>";
         }
         echo "<td><a href=\"conditions.php?game_id=$wl_id\">Victory conditions</a></td>";
         echo "</tr>";

@@ -27,10 +27,10 @@ if($current_turn_db == NULL){
 }
 
 //fetch game json
-$data=array("GameID"=>$game_id);
-$game_data=post_request_data($data, 'game', TRUE);
-file_put_contents("test_data.json", json_encode($game_data));
-//$game_data = json_decode(file_get_contents("test_data.json"), true);
+//$data=array("GameID"=>$game_id);
+//$game_data=post_request_data($data, 'game', TRUE);
+//file_put_contents("test_data.json", json_encode($game_data));
+$game_data = json_decode(file_get_contents("test_data.json"), true);
 
 if(!$game_data){
     header("Location: error.php?err=Unable to retrieve game data from Warlight! (game ID: $game_id)");
@@ -127,6 +127,7 @@ function record_possitions($turn_possitions, $turn, $players, $game_id){
                     . "`armies`) VALUES (NULL, '$game_id', '$current_turn_db', '$p_terr_id','$p_ownedBy','$p_armies')";
           
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not insert possition ($query)");
                 exit();
             }
@@ -153,6 +154,7 @@ function record_deploy($turn_deployments, $game_players, $players, $game_id, $tu
         $query = "INSERT INTO `$database`.`record_income` (`ID`, `game_id`, `turn`, `player`, `income`) "
                 . "VALUES (NULL, '$game_id', '$current_turn_db', '$player','$p_income')";
         if(!insert_db($query)){
+            if(!DEBUG){$query = "";}
             header("Location: error.php?err=Could not insert incomes ($query)");
             exit();
         }
@@ -180,6 +182,7 @@ function record_moves($turn_moves, $players, $owning, $game_id, $turn){
                     . "'$attacker','$deffender','$killed_att','$killed_def','$isAttack','$isSuccessful')";
             
             if(!insert_db($query)){
+                if(!DEBUG){$query = "";}
                 header("Location: error.php?err=Could not insert moves ($query)");
                 exit();
             }
@@ -206,6 +209,7 @@ function record_cards($Cards, $turn_cards, $players, $turn, $game_id){
                         . "(NULL, '$game_id', '$current_turn_db', '$C_type','$C_from')";
                
                 if(!insert_db($query)){
+                    if(!DEBUG){$query = "";}
                     header("Location: error.php?err=Could not insert cards ($query)");
                     exit();
                 }
@@ -219,6 +223,7 @@ function set_turn($game_id, $turn){
     $current_turn_db = $turn + 1;
     $query = "UPDATE `$database`.`games` SET `turn` = '$current_turn_db' WHERE `game_id` = $game_id";
     if(!insert_db($query)){
+        if(!DEBUG){$query = "";}
         header("Location: error.php?err=Could not update turn ($query)");
         exit();
     }
