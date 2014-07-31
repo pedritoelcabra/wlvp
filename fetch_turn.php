@@ -27,10 +27,10 @@ if($current_turn_db == NULL){
 }
 
 //fetch game json
-//$data=array("GameID"=>$game_id);
-//$game_data=post_request_data($data, 'game', TRUE);
+$data=array("GameID"=>$game_id);
+$game_data=post_request_data($data, 'game', TRUE);
 //file_put_contents("test_data.json", json_encode($game_data));
-$game_data = json_decode(file_get_contents("test_data.json"), true);
+//$game_data = json_decode(file_get_contents("test_data.json"), true);
 
 if(!$game_data){
     header("Location: error.php?err=Unable to retrieve game data from Warlight! (game ID: $game_id)");
