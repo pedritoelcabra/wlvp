@@ -1,7 +1,7 @@
 <?php
 include("header.php");
 include 'mysql_config.php';
-if((!$loged) || ($role > ROLE_ADVANCED)){
+if((!$loged) || ($role > ROLE_USER)){
     header("Location: error.php?err=You're not authorized to access this page");
     exit();
 }

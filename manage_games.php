@@ -6,7 +6,7 @@ if((!$loged) || ($role > ROLE_USER)){
     exit();
 }
 //<!---PAGE CONTENT WHEN LOGED-->
-if($role <= ROLE_ADVANCED){
+if($role <= ROLE_USER){
     echo "<b><a href=\"create_game.php\">Create a new game through the Warlight API</a></b></br></br>";
 }
 

@@ -17,7 +17,7 @@ echo "Member role definitions (provisory)"
 . "<ul>"
 . "<li><b>Unconfirmed</b>: Has created account, waiting for admin confirmation.</li>"
 . "<li><b>User</b>: Can watch game scores.</li>"
-. "<li><b>Advanced User</b>: Can also modify victory conditions.</li>"
+. "<li><b>Advanced User</b>: Same access as user for now.</li>"
 . "<li><b>Admin</b>: All access, can edit members and games.</li>"
 . "</ul></br>";
 
