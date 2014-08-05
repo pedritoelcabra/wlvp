@@ -265,11 +265,3 @@ if($access){ ?>
 
 
 
-
-?>
-
-<br /><br /><br /><a href="manage_games.php">Games</a>
-<br /><a href="index.php">Index</a>
-
-<?php 
-include("footer.php");

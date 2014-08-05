@@ -48,8 +48,6 @@ function post_request_data($data, $action, $get_history){
         array(
             'Email' => $api_email,
             'APIToken' => $api_token,
-            //	'GameID' => '1212978',
-            //	'GetHistory' => 'true'
         )
     );
 
@@ -65,51 +63,53 @@ function post_request_data($data, $action, $get_history){
     $api_url='http://warlight.net/API/';
     if($action=="player"){
         $url=$api_url.'ValidateInviteToken?Token='.$data["Token"];
-        $auth_email="Email";
-        $auth_token="APIToken";
     }elseif($action=="game"){
         $url=$api_url.'GameFeed?GameID='.$data["GameID"];
         if($get_history){
             $url .= "&GetHistory=true";
         }
-        $auth_email="Email";
-        $auth_token="APIToken";
+    }else if($action == "chat"){
+        $url = $api_url . 'GameFeed?GameID=' . $data["GameID"] . "&GetChat=true";
     }
 
 
     $result = file_get_contents($url, false, $context);
 
-    $count=99;
-    for($i=0;$count!=0;$i++){
-        $pattern = '/GameOrderDeploy":/';
-        $order= 'GameOrderDeploy'.$i.'":';
-        $replacement = $order;
-        $result = preg_replace($pattern, $replacement, $result,1,$count);
-    }
-
-    $count=99;
-    for($i=0;$count!=0;$i++){
-        $pattern = '/GameOrderAttackTransfer":/';
-        $order= 'GameOrderAttackTransfer'.$i.'":';
-        $replacement = $order;
-        $result = preg_replace($pattern, $replacement, $result,1,$count);
-    }
-
-    $Cards=cards();
-
-    foreach($Cards as $Card){
-            $count=99;
-            for($i=0;$count!=0;$i++){
-            $pattern = '/'.$Card.'":/';
-            $order= $Card.$i.'":';
+    if($action == "game"){
+        $count=99;
+        for($i=0;$count!=0;$i++){
+            $pattern = '/GameOrderDeploy":/';
+            $order= 'GameOrderDeploy'.$i.'":';
             $replacement = $order;
             $result = preg_replace($pattern, $replacement, $result,1,$count);
+        }
+
+        $count=99;
+        for($i=0;$count!=0;$i++){
+            $pattern = '/GameOrderAttackTransfer":/';
+            $order= 'GameOrderAttackTransfer'.$i.'":';
+            $replacement = $order;
+            $result = preg_replace($pattern, $replacement, $result,1,$count);
+        }
+
+        $Cards=cards();
+
+        foreach($Cards as $Card){
+            $count=99;
+            for($i=0;$count!=0;$i++){
+                $pattern = '/'.$Card.'":/';
+                $order= $Card.$i.'":';
+                $replacement = $order;
+                $result = preg_replace($pattern, $replacement, $result,1,$count);
             }
+        }
     }
 
-    $game_details=json_decode($result, true);
+    $game_details = json_decode($result, true);
+    
     if(isset($game_details["error"])){
-        //echo $game_details["error"]."?";
+//        echo $game_details["error"]."?";
+//        exit();
         return FALSE;
     }else{
         return $game_details;

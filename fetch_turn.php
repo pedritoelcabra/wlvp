@@ -27,8 +27,8 @@ if($current_turn_db == NULL){
 }
 
 //fetch game json
-$data=array("GameID"=>$game_id);
-$game_data=post_request_data($data, 'game', TRUE);
+$data = array("GameID"=>$game_id);
+$game_data = post_request_data($data, 'game', TRUE);
 //file_put_contents("test_data.json", json_encode($game_data));
 //$game_data = json_decode(file_get_contents("test_data.json"), true);
 
@@ -45,6 +45,17 @@ if($game_data['state'] == "Finished"){
         header("Location: error.php?err=Could not set game as finished ($query)");
         exit();
     }
+    $map_data = $game_data['map'];
+    $map_id = $map_data['id'];
+    $query = "UPDATE `$database`.`games` SET `map_id` = $map_id WHERE `game_id` = $game_id";
+    if(!insert_db($query)){
+        if(!DEBUG){$query = "";}
+        header("Location: error.php?err=Could not set map id! ($query)");
+        exit();
+    }
+}else{
+    header("Location: error.php?err=This game is not yet finished!");
+    exit();
 }
 
 $game_name = $game_data['name'];

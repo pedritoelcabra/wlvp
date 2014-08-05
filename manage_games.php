@@ -17,24 +17,11 @@ if($role == ROLE_ADMIN){ ?>
 	<INPUT TYPE=text name=game_id>
 	<input name=action type=submit value="Add">
 </form>
-<form name=delete_game action=delete_game.php method=get>
-	<b>Delete a Warlight game from our database</b><br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Delete">
-</form>
-<form name=fetch_turn action=fetch_turn.php method=get>
-	<b>Update game from Warlight </b> <br/>(Adding and updating games consumes a lot of Warlight bandwith - use responsibly!)<br/>
-	Game ID:
-	<INPUT TYPE=text name=game_id>
-	<input name=action type=submit value="Update">
-</form>
-<?php } ?>
+<?php } 
 
-<?php 
 
 echo '<table>';
-echo '<tr><td>Game name</td><td>Game ID</td><td>Last recorded turn</td></tr>';
+echo '<tr><td>Game name</td><td>Game ID</td><td>DB turn</td><td>Chat</td></tr>';
 $games = query_db("games", NULL, "*", FALSE);
 if(isset($games['game_name'])){
     $games_raw = $games;
@@ -44,14 +31,24 @@ if(isset($games['game_name'])){
 if($games){
     foreach ($games as $game){
         $name = $game['game_name'];
+        if(strlen($name) > 30){
+            $name = substr($name, 0, 30) . "...";
+        }
         $wl_id = $game['game_id'];
         $turn = $game['turn'];
         $finished = $game['finished'];
+        $map = $game['map_id'];
         if(!$finished){
-            echo "<tr><td>$name</td><td>$wl_id</td><td>$turn</td>";
+            echo "<tr><td>$name</td><td>$wl_id</td>";
         }else{
-            echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td><td>$turn</td>";
+            echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td>";
         }
+        if($map > 0){
+            echo "<td>$turn</td>";
+        }else{
+            echo "<td>Ongoing</td>";
+        }
+        echo "<td><a href=\"chat.php?game_id=$wl_id\">See chat</td>";
         if($role == ROLE_ADMIN){
             echo "<td><a href=\"delete_game.php?game_id=$wl_id&action=Delete\">Delete</a></td>";
             if(!$finished){
@@ -61,7 +58,9 @@ if($games){
             }
             echo "<td><a href=\"permissions.php?game_id=$wl_id\">Set permissions</a></td>";
         }
-        echo "<td><a href=\"conditions.php?game_id=$wl_id\">Victory conditions</a></td>";
+        if($map > 0){
+            echo "<td><a href=\"conditions.php?game_id=$wl_id\">Victory conditions</a></td>";
+        }
         echo "</tr>";
 
     }

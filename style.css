@@ -35,3 +35,11 @@ tr, td{
 .ca{
     text-align: center;
 }
+
+td.iv{
+    border: 0px solid black;
+}
+
+tr.iv{
+    border: 0px solid black;
+}

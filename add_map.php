@@ -12,6 +12,7 @@ if((!$loged) || ($role > ROLE_ADVANCED)){
 <form action="add_map.php" method="get">
 Game ID: <input type="text" name="game_id"><br>
 (You must enter the ID of a finished game from a tournament with the desired map) <br/>
+<b>Loading the map may take a few seconds!!</b> <br/>
 <input type="Submit" name="action" value="add">
 </form>
 <?php 

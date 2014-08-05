@@ -10,9 +10,12 @@ if(isset($_POST["action"])){
     ?>
     <p>Create user account</p>
     <form action="add_player.php" method="post">
-    Email: <input type="text" name="mail"><br>
-    Warlight ID: <input type="text" name="wl_id"><br>
-    Password: <input type="text" name="pwd"><br>
+    Email:<br>  
+    <input type="text" name="mail"><br>
+    Warlight ID (The number from the URL of your Warlight profile):<br> 
+    <input type="text" name="wl_id"><br>
+    Password:<br> 
+    <input type="text" name="pwd"><br>
     <input type="Submit" name="action" value="Create">
     </form>
     <?php 

@@ -41,8 +41,9 @@ if(isset($game_data['map'])){
         exit();
     }
 }else{
-    header("Location: error.php?err=This game has no map data. Maybe it is not finished yet?");
-    exit();
+    $map_id = 0;
+//    header("Location: error.php?err=This game has no map data. Maybe it is not finished yet?");
+//    exit();
 }
 
 // we create a new game in the database

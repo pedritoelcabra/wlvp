@@ -9,12 +9,16 @@
  *      1 can also add new games
  */
 
+ini_set('memory_limit','256M');
+
 define('DEBUG', TRUE);
 
 define('ROLE_UNCONFIRMED', 9);
 define('ROLE_USER', 8);
 define('ROLE_ADVANCED', 4);
 define('ROLE_ADMIN', 1);
+
+ob_start();
 
 session_start();
 
