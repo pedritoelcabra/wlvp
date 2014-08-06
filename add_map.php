@@ -39,28 +39,47 @@ if(isset($_GET["game_id"])) {
             $wl_id = $map_details["id"];
             $name = escape_str($map_details["name"]);
             $territories = $map_details["territories"];
+            $bonuses = $map_details["bonuses"];
             if(!check_db_entry("maps","wl_id",$wl_id)){
-                $n_territories=0;
+                $n_territories = 0;
                 foreach($territories as $territory){
                     $t_name = escape_str($territory["name"]);
                     $t_id = $territory["id"];
 
-                    $query = "INSERT INTO `$database`.`territories` (`ID`, `wl_id`, `name`, `map_id`) VALUES (NULL, '".$t_id."', '".$t_name."', '".$wl_id."')";
+                    $query = "INSERT INTO `$database`.`territories` (`ID`, `wl_id`, `name`, `map_id`) VALUES "
+                            . "(NULL, '$t_id', '$t_name', '$wl_id')";
                     if (insert_db($query)){
                         $n_territories++;
                     }else{
                         if(!DEBUG){$query = "";}
-                        header("Location: error.php?err=An error occurred while inserting territories into the database! ($query)");
+                        header("Location: error.php?err=An error occurred while inserting territories into the database! "
+                                . "($query)");
                         exit();
                     }
                 }
-                $query = "INSERT INTO `$database`.`maps` (`ID`, `wl_id`, `name`, `n_territories`, `pic`) VALUES (NULL, '".$wl_id."', '".$name."', '".$n_territories."', '')";
+                foreach($bonuses as $bonus){
+                    $b_name = escape_str($bonus["name"]);
+                    $b_id = $bonus["id"];
+
+                    $query = "INSERT INTO `$database`.`bonuses` (`ID`, `wl_id`, `name`, `map_id`) VALUES "
+                            . "(NULL, '$b_id', '$b_name', '$wl_id')";
+                    if (!insert_db($query)){
+                        if(!DEBUG){$query = "";}
+                        header("Location: error.php?err=An error occurred while inserting bonuses into the database! "
+                                . "($query)");
+                        exit();
+                    }
+                }
+                
+                $query = "INSERT INTO `$database`.`maps` (`ID`, `wl_id`, `name`, `n_territories`, `pic`) VALUES "
+                        . "(NULL, '$wl_id', '$name', '$n_territories', '')";
 
                 if(insert_db($query)){
                     echo "The map $name is now available." ;
                 }else{
                     if(!DEBUG){$query = "";}
-                    header("Location: error.php?err=An error occurred while inserting the map into the database! ($query)");
+                    header("Location: error.php?err=An error occurred while inserting the map into the database! "
+                            . "($query)");
                     exit();
                 }
             }else{
@@ -73,6 +92,9 @@ if(isset($_GET["game_id"])) {
         
         $queryb = "DELETE FROM `$database`.`territories` WHERE map_id = $game_id;";
         $result = insert_db($queryb);
+        
+        $queryc = "DELETE FROM `$database`.`bonuses` WHERE map_id = $game_id;";
+        $result = insert_db($queryc);
         
         echo "</br></br>Map deleted!</br>";
     }

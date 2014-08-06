@@ -36,14 +36,33 @@ if(!$game_data){
 if(isset($game_data['map'])){
     $map_data = $game_data['map'];
     $map_id = $map_data['id'];
+}else{
+    if(isset($_GET["map_id"])){
+        $map_id = $_GET["map_id"];
+    }else{
+        echo "This game has no map data, maybe because it's not finished or because it wasn't created through the API."
+        . "</br></br>You can insert the map ID manually or leave the field at 0 to add the game without map data</br></br>"
+        . "<b>It has to be the ID shown in the map list in the VPS not the map ID from the Warlight map page</b></br></br>";
+        ?>
+        <form name=add_game action=add_game.php method=get>
+                Map ID:
+                <INPUT TYPE=text name=map_id value="0">
+                <INPUT TYPE=hidden name=game_id value="<?php echo $game_id; ?>">
+                <input name=action type=submit value="Add">
+        </form>
+        <?php
+
+        echo "<br /><br /><a href=\"manage_games.php\">Back</a>";
+
+        include("footer.php");
+        exit();
+    }
+}
+if($map_id != 0){
     if(!check_db_entry("maps", "wl_id", $map_id)){
         header("Location: error.php?err=The map for this game is not in our database.");
         exit();
     }
-}else{
-    $map_id = 0;
-//    header("Location: error.php?err=This game has no map data. Maybe it is not finished yet?");
-//    exit();
 }
 
 // we create a new game in the database

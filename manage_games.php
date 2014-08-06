@@ -21,7 +21,7 @@ if($role == ROLE_ADMIN){ ?>
 
 
 echo '<table>';
-echo '<tr><td>Game name</td><td>Game ID</td><td>DB turn</td><td>Chat</td></tr>';
+echo '<tr><td>Game name</td><td>Game ID</td><td>Turns</td><td>Chat</td></tr>';
 $games = query_db("games", NULL, "*", FALSE);
 if(isset($games['game_name'])){
     $games_raw = $games;
@@ -43,7 +43,7 @@ if($games){
         }else{
             echo "<tr><td><a href=\"game.php?game_id=$wl_id\">$name</a></td><td>$wl_id</td>";
         }
-        if($map > 0){
+        if($map > 1){
             echo "<td>$turn</td>";
         }else{
             echo "<td>Ongoing</td>";
@@ -56,7 +56,7 @@ if($games){
             }else{
                 echo "<td>Finished</td>";
             }
-            echo "<td><a href=\"permissions.php?game_id=$wl_id\">Set permissions</a></td>";
+            echo "<td><a href=\"permissions.php?game_id=$wl_id\">Permissions</a></td>";
         }
         if($map > 0){
             echo "<td><a href=\"conditions.php?game_id=$wl_id\">Victory conditions</a></td>";
