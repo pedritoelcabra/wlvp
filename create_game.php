@@ -83,13 +83,16 @@ if(!isset($_POST['mail'])){
             break;
         case "Creat":
             $json_data = json_encode($data);
-            $result = send_data($json_data);
-            var_dump($result);
-            if(isset($result['gameID'])){
-                $game_id = $result['gameID'];
-                echo "Game created successfully! Game ID $game_id";
+            $result = json_decode(send_data($json_data));
+            if(isset( $result->gameID )){
+                $game_id = $result->gameID;
+                echo "Game created successfully! Game ID: $game_id";
+            }elseif ( isset($result->error )) {
+                $err = $result->error;
+                echo "Game creation failed! Error: $err";
             }else{
-                echo $result;
+                echo 'Unknown error!</br></br>';
+                echo $json_data;                
             }
             echo "</br>";
             ?>
